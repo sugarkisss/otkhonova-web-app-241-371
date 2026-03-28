@@ -1,0 +1,12 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center my-5">
+    <h1 class="display-1 fw-bold">404</h1>
+    <p class="fs-3"> <span class="text-danger">Ой!</span> Страница не найдена.</p>
+    <p class="lead">
+        Похоже, пост с таким номером еще не написан.
+    </p>
+    <a href="{{ url_for('posts') }}" class="btn btn-primary">Вернуться к постам</a>
+</div>
+{% endblock %}
