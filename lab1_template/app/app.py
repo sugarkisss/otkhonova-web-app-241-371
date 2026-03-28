@@ -81,10 +81,16 @@ def post(index):
     # Передаем объект поста в шаблон post.html
     return render_template('post.html', title=p['title'], post=p)
 
-@app.route('/about')
-def about():
-    """Страница об авторе (о тебе)."""
-    return render_template('about.html', title='Об авторе')
+@app.route('/posts/<int:index>')
+def post(index):
+    all_posts = posts_list()
+    
+    # ПРОВЕРКА: Если индекса нет в списке, принудительно вызываем 404
+    if index < 0 or index >= len(all_posts):
+        abort(404) 
+    
+    p = all_posts[index]
+    return render_template('post.html', title=p['title'], post=p)
 
 # --- Обработка ошибок ---
 
