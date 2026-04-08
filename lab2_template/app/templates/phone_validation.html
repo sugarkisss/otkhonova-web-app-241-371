@@ -1,0 +1,86 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="my-5 text-center">Валидация номера телефона</h1>
+        
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-phone"></i> Введите номер телефона</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('phone_validation') }}">
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Номер телефона:</label>
+                        <input type="text" 
+                               class="form-control form-control-lg {% if is_invalid %}is-invalid{% endif %}" 
+                               id="phone" 
+                               name="phone" 
+                               value="{{ phone_number }}"
+                               placeholder="Примеры: +7 (123) 456-75-90, 8(123)4567590, 123.456.75.90">
+                        {% if error_message %}
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-triangle"></i> {{ error_message }}
+                        </div>
+                        {% endif %}
+                        <div class="form-text mt-2">
+                            <strong>Допустимые форматы:</strong><br>
+                            <span class="badge bg-secondary">+7 (123) 456-75-90</span>
+                            <span class="badge bg-secondary">8(123)4567590</span>
+                            <span class="badge bg-secondary">123.456.75.90</span>
+                            <span class="badge bg-secondary">+7 123 456 75 90</span>
+                            <span class="badge bg-secondary">8-123-456-75-90</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-check-circle"></i> Проверить
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        {% if formatted_phone %}
+        <div class="card mt-4 border-success">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="bi bi-check-circle-fill"></i> Результат проверки</h4>
+            </div>
+            <div class="card-body text-center">
+                <div class="alert alert-success mb-0">
+                    <strong>✓ Номер корректен!</strong><br>
+                    Отформатированный номер: 
+                    <code class="fs-4 d-block mt-2">{{ formatted_phone }}</code>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Правила валидации</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">✓ Корректные номера:</h6>
+                        <ul class="small">
+                            <li>Содержат 10 или 11 цифр</li>
+                            <li>Могут начинаться с +7 или 8 (для 11 цифр)</li>
+                            <li>Допустимые символы: цифры, +, пробелы, скобки, дефисы, точки</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger">✗ Ошибки:</h6>
+                        <ul class="small">
+                            <li>Неверное количество цифр (не 10 и не 11)</li>
+                            <li>Недопустимые символы (буквы, спецсимволы и т.д.)</li>
+                            <li>11 цифр, но не начинаются с 7 или 8</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

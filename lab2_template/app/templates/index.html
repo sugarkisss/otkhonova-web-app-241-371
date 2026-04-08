@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="my-5 text-center">Лабораторная работа №2</h1>
+        
+        <div class="alert alert-info">
+            <h4 class="text-center">Разработка веб-приложения с использованием фреймворка Flask</h4>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">1. Отображение данных запроса</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-link-45deg"></i>
+                                <a href="{{ url_for('request_params') }}">Параметры URL</a>
+                                <p class="text-muted small ms-4">Отображение всех переданных GET-параметров</p>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-file-text"></i>
+                                <a href="{{ url_for('request_headers') }}">Заголовки запроса</a>
+                                <p class="text-muted small ms-4">Отображение всех HTTP заголовков</p>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-cookie"></i>
+                                <a href="{{ url_for('cookies') }}">Cookie</a>
+                                <p class="text-muted small ms-4">Установка и удаление cookie</p>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-envelope"></i>
+                                <a href="{{ url_for('form_params') }}">Параметры формы</a>
+                                <p class="text-muted small ms-4">Отображение отправленных POST-данных</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">2. Форма с обработкой ошибок</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-phone"></i>
+                                <a href="{{ url_for('phone_validation') }}">Валидация телефона</a>
+                                <p class="text-muted small ms-4">Проверка и форматирование номера телефона</p>
+                            </li>
+                        </ul>
+                        
+                        <hr>
+                        
+                        <h6>Примеры корректных номеров:</h6>
+                        <ul class="small">
+                            <li><code>+7 (123) 456-75-90</code> → <code>8-123-456-75-90</code></li>
+                            <li><code>8(123)4567590</code> → <code>8-123-456-75-90</code></li>
+                            <li><code>123.456.75.90</code> → <code>8-123-456-75-90</code></li>
+                            <li><code>+7 123 456 75 90</code> → <code>8-123-456-75-90</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Требования к валидации телефона</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>✓ Допустимые форматы:</h6>
+                        <ul>
+                            <li>10 или 11 цифр</li>
+                            <li>Символы: +, пробелы, скобки, дефисы, точки</li>
+                            <li>Начало с +7 или 8 (для 11 цифр)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>✗ Ошибки:</h6>
+                        <ul>
+                            <li>Неверное количество цифр</li>
+                            <li>Недопустимые символы</li>
+                            <li>11 цифр, но не с 7 или 8</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

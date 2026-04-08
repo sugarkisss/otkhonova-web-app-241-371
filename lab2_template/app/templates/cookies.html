@@ -1,0 +1,54 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="my-5 text-center">Работа с Cookie</h1>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0"><i class="bi bi-cookie"></i> Текущее значение Cookie</h4>
+            </div>
+            <div class="card-body text-center">
+                <div class="alert alert-info">
+                    <strong>Cookie 'user_choice':</strong> 
+                    <code class="fs-5">{{ cookie_value }}</code>
+                </div>
+                
+                {% if cookie_value == 'не установлен' %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle"></i>
+                        Cookie был автоматически установлен при первом посещении страницы!
+                    </div>
+                {% else %}
+                    <div class="alert alert-secondary">
+                        <i class="bi bi-info-circle"></i>
+                        Cookie уже установлен. Вы можете удалить его, нажав на кнопку ниже.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body text-center">
+                <a href="{{ url_for('delete_cookie') }}" class="btn btn-danger btn-lg me-3">
+                    <i class="bi bi-trash"></i> Удалить cookie
+                </a>
+                <a href="{{ url_for('cookies') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-arrow-repeat"></i> Обновить страницу
+                </a>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-muted small">
+            <h6>Информация о cookie:</h6>
+            <ul>
+                <li>Название: <code>user_choice</code></li>
+                <li>Значение: <code>example_value</code></li>
+                <li>Время жизни: 1 час (3600 секунд)</li>
+                <li>Устанавливается автоматически при первом посещении</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
