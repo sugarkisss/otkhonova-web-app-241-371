@@ -1,15 +1,17 @@
 import random
 from functools import lru_cache
-from flask import Flask, render_template, abort # Основные инструменты Flask
-from faker import Faker # Библиотека для генерации "рыбного" текста
+from flask import Flask, render_template, abort  # Импортируем Flask и вспомогательные функции
+from faker import Faker  # Библиотека для генерации случайных данных (имена, тексты, даты)
 
-# Инициализируем генератор случайных данных
+# Инициализируем объект Faker с русским языком (по желанию можно добавить locale='ru_RU')
 fake = Faker()
 
+# Создаем само веб-приложение Flask
 app = Flask(__name__)
-application = app # Ссылка для совместимости с хостингами
+application = app  # Это нужно для совместимости с некоторыми хостингами (например, PythonAnywhere)
 
-# Список ID картинок, которые лежат в папке static/images/
+# Список ID изображений, которые лежат в папке static/images
+# Flask будет подставлять эти строки в теги <img src="...">
 images_ids = [
     '7d4e9175-95ea-4c5f-8be5-92a6b708bb3c',
     '2d2ab7df-cdbc-48a8-a936-35bba702def5',
@@ -19,89 +21,86 @@ images_ids = [
 ]
 
 def generate_comments(replies=True):
-    """Генерирует случайные комментарии и вложенные ответы к ним."""
+    """
+    Вспомогательная функция для создания списка случайных комментариев.
+    Если replies=True, то функция вызывает сама себя для создания ответов на комментарии.
+    """
     comments = []
+    # Генерируем от 1 до 3 комментариев
     for _ in range(random.randint(1, 3)):
         comment = {
-            'author': fake.name(),
-            'text': fake.text()
+            'author': fake.name(),  # Случайное имя автора
+            'text': fake.text()     # Случайный текст комментария
         }
+        # Если это основной комментарий, добавим к нему вложенные ответы
         if replies:
-            # Рекурсивно создаем ответы на комментарии
             comment['replies'] = generate_comments(replies=False)
         comments.append(comment)
     return comments
 
 def generate_post(i):
-    """Создает структуру данных для одного поста."""
+    """
+    Функция создает словарь с данными для одного поста.
+    i - это индекс (номер) картинки из списка images_ids.
+    """
     return {
-        'title': f'Заголовок поста {i+1}',
-        'text': fake.paragraph(nb_sentences=100),
-        'author': fake.name(),
-        'date': fake.date_time_between(start_date='-2y', end_date='now'),
-        'image_id': f'{images_ids[i]}.jpg',
-        'comments': generate_comments()
+        'title': f'Заголовок поста {i+1}', # Формируем название
+        'text': fake.paragraph(nb_sentences=100), # Генерируем длинный текст поста
+        'author': fake.name(), # Случайное имя автора поста
+        'date': fake.date_time_between(start_date='-2y', end_date='now'), # Дата за последние 2 года
+        'image_id': f'{images_ids[i]}.jpg', # Название файла картинки
+        'comments': generate_comments() # Создаем список комментариев для этого поста
     }
 
 @lru_cache
 def posts_list():
     """
-    Создает список из 5 постов. 
-    Используем lru_cache, чтобы данные не менялись при каждом обновлении страницы.
+    Создает список из 5 постов и кэширует его.
+    @lru_cache нужен, чтобы при каждом обновлении страницы посты не менялись на новые.
+    Сортируем посты по дате (от новых к старым).
     """
     posts = [generate_post(i) for i in range(5)]
-    # Сортируем по дате публикации (от свежих к старым)
     return sorted(posts, key=lambda p: p['date'], reverse=True)
 
-# --- Маршруты приложения ---
+# --- МАРШРУТЫ (ROUTES) ---
 
 @app.route('/')
 def index():
-    """Главная страница с текстом задания."""
+    """Главная страница. Просто отображает файл index.html."""
     return render_template('index.html')
 
 @app.route('/posts')
 def posts():
-    """Страница со списком всех постов."""
+    """
+    Страница со списком всех постов.
+    Передает список всех постов (posts_list()) в шаблон posts.html под именем 'posts'.
+    """
     return render_template('posts.html', title='Посты', posts=posts_list())
 
 @app.route('/posts/<int:index>')
 def post(index):
     """
-    Страница одного конкретного поста.
-    index — это номер поста, который мы получаем из URL.
+    Страница конкретного поста. 
+    Принимает из URL число (index), например: /posts/0
     """
-    all_posts = posts_list()
+    all_posts = posts_list() # Получаем список всех постов
     
-    # Проверка на существование поста (нужна для тестов на ошибку 404)
+    # Проверка: если номер поста меньше 0 или больше, чем у нас есть в списке
     if index < 0 or index >= len(all_posts):
-        abort(404)
-        
-    p = all_posts[index]
-    # Передаем объект поста в шаблон post.html
-    return render_template('post.html', title=p['title'], post=p)
-
-@app.route('/posts/<int:index>')
-def post(index):
-    all_posts = posts_list()
+        abort(404) # Прерываем работу и выдаем ошибку 404 (Not Found)
     
-    # ПРОВЕРКА: Если индекса нет в списке, принудительно вызываем 404
-    if index < 0 or index >= len(all_posts):
-        abort(404) 
+    # Берем нужный пост по его индексу
+    current_post = all_posts[index]
     
-    p = all_posts[index]
-    return render_template('post.html', title=p['title'], post=p)
+    # Отправляем данные в шаблон post.html.
+    # В шаблоне мы сможем обращаться к переменной 'post', чтобы вывести заголовок, текст и т.д.
+    return render_template('post.html', title=current_post['title'], post=current_post)
 
-# --- Обработка ошибок ---
+@app.route('/about')
+def about():
+    """Страница об авторе."""
+    return render_template('about.html', title='Об авторе')
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """
-    Если мы создадим файл 404.html, Flask покажет его.
-    Если файла нет, вернется стандартная ошибка, но код 404 сохранится.
-    """
-    # Можно просто вернуть строку или отрендерить шаблон, если он есть
-    return render_template('index.html', title="404 - Не найдено"), 404
-
+# Точка входа: если файл запущен напрямую, запускаем сервер Flask
 if __name__ == '__main__':
     app.run()
