@@ -2,41 +2,49 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card">
-            <div class="card-header bg-info text-white text-center">
-                <h4 class="mb-0">
-                    <i class="bi bi-graph-up"></i> Счетчик посещений
-                </h4>
-            </div>
-            <div class="card-body text-center">
-                <div class="display-1 fw-bold text-primary">{{ visit_count }}</div>
-                <p class="lead mt-3">
-                    {% if visit_count == 1 %}
-                        Это ваше первое посещение этой страницы!
-                    {% else %}
-                        Вы посетили эту страницу {{ visit_count }} раз(а).
-                    {% endif %}
-                </p>
-                <hr>
-                <div class="alert alert-secondary">
-                    <i class="bi bi-info-circle"></i>
-                    <strong>Как это работает:</strong>
-                    <p class="mb-0 small mt-2">
-                        Счетчик использует глобальный объект <code>session</code> Flask.
-                        Значение сохраняется отдельно для каждого пользователя (браузера).
-                    </p>
-                </div>
-                <div class="mt-3">
-                    <a href="{{ url_for('index') }}" class="btn btn-primary">
-                        <i class="bi bi-house"></i> На главную
-                    </a>
-                    <a href="{{ url_for('counter') }}" class="btn btn-success">
-                        <i class="bi bi-arrow-repeat"></i> Обновить
-                    </a>
-                </div>
-            </div>
+  <div class="col-md-8 col-lg-6">
+    <div class="card">
+      <div class="card-header bg-info text-white text-center">
+        <h4 class="mb-0">
+          <i class="bi bi-graph-up"></i> Счетчик посещений
+        </h4>
+      </div>
+      <div class="card-body text-center">
+        <!-- Крупное число - счетчик посещений -->
+        <div class="display-1 fw-bold text-primary">{{ visit_count }}</div>
+        
+        <!-- Текст в зависимости от количества посещений -->
+        <p class="lead mt-3">
+          {% if visit_count == 1 %}
+            Это ваше первое посещение этой страницы!
+          {% else %}
+            Вы посетили эту страницу {{ visit_count }} раз(а).
+          {% endif %}
+        </p>
+        
+        <hr>
+        
+        <!-- Объяснение как работает счетчик -->
+        <div class="alert alert-secondary">
+          <i class="bi bi-info-circle"></i>
+          <strong>Как это работает:</strong>
+          <p class="mb-0 small mt-2">
+            Счетчик использует глобальный объект <code>session</code> Flask.
+            Значение сохраняется отдельно для каждого пользователя (браузера).
+          </p>
         </div>
+        
+        <!-- Кнопки -->
+        <div class="mt-3">
+          <a href="{{ url_for('index') }}" class="btn btn-primary">
+            <i class="bi bi-house"></i> На главную
+          </a>
+          <a href="{{ url_for('counter') }}" class="btn btn-success">
+            <i class="bi bi-arrow-repeat"></i> Обновить
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

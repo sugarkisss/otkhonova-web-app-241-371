@@ -1,90 +1,92 @@
 import pytest
 from app import app, users
 
-# ============================================
-# ФИКСТУРЫ
-# ============================================
-
+# ФИКСТУРА: создает тестового клиента (как браузер для тестов)
 @pytest.fixture
 def client():
-    """Тестовый клиент"""
+    # Включаем режим тестирования
     app.config['TESTING'] = True
+    # Секретный ключ для тестов (не такой как в основном приложении)
     app.config['SECRET_KEY'] = 'test-secret-key'
+    # Отключаем CSRF защиту для тестов (иначе форма не отправится)
     app.config['WTF_CSRF_ENABLED'] = False
     
+    # Создаем тестового клиента
     with app.test_client() as client:
+        # Очищаем сессию перед каждым тестом
         with client.session_transaction() as sess:
             sess.clear()
-        yield client
+        yield client  # Возвращаем клиент для использования в тесте
 
+# ФИКСТУРА: создает уже авторизованного клиента
 @pytest.fixture
 def auth_client(client):
-    """Авторизованный тестовый клиент"""
+    # Отправляем запрос на вход с правильными данными
     client.post('/login/', data={
         'username': 'user',
         'password': 'qwerty',
         'remember': False
-    }, follow_redirects=True)
+    }, follow_redirects=True)  # follow_redirects - переходим по редиректу
     return client
 
-# ============================================
-# ТЕСТЫ СЧЕТЧИКА ПОСЕЩЕНИЙ
-# ============================================
-
+# ТЕСТ 1: проверяем первое посещение счетчика
 def test_counter_first_visit(client):
-    """Тест 1: первое посещение счетчика"""
+    # Открываем страницу счетчика
     response = client.get('/counter/')
+    # Статус 200 - страница существует
     assert response.status_code == 200
-    # Проверяем, что счетчик показывает 1 (может быть в разных форматах)
+    # На странице должна быть цифра 1 или текст "первое посещение"
     assert '1' in response.text or 'первое посещение' in response.text
 
+# ТЕСТ 2: проверяем несколько посещений счетчика
 def test_counter_multiple_visits(client):
-    """Тест 2: несколько посещений счетчика"""
+    # Три раза заходим на страницу
     client.get('/counter/')  # 1-й раз
     client.get('/counter/')  # 2-й раз
     response = client.get('/counter/')  # 3-й раз
+    # Счетчик должен показывать 3
     assert '3' in response.text
-    assert '3 раз' in response.text or '3' in response.text
 
+# ТЕСТ 3: счетчик должен быть независимым для разных сессий
 def test_counter_independent_for_different_sessions(client):
-    """Тест 3: счетчик независим для разных сессий"""
-    # Первая сессия
+    # Для первой сессии устанавливаем счетчик = 5
     with client.session_transaction() as sess:
         sess['visit_count'] = 5
+    # При следующем посещении должно стать 6
     response1 = client.get('/counter/')
     assert '6' in response1.text
     
-    # Вторая сессия (новый клиент)
+    # Создаем нового клиента (новая сессия)
     with app.test_client() as client2:
+        # Счетчик должен начаться с 1
         response2 = client2.get('/counter/')
         assert '1' in response2.text
 
-# ============================================
-# ТЕСТЫ АУТЕНТИФИКАЦИИ
-# ============================================
-
+# ТЕСТ 4: страница входа открывается
 def test_login_page_GET(client):
-    """Тест 4: страница входа открывается"""
     response = client.get('/login/')
     assert response.status_code == 200
+    # На странице должен быть заголовок "Вход в систему"
     assert 'Вход в систему' in response.text or 'Login' in response.text
 
+# ТЕСТ 5: успешный вход с правильными данными
 def test_login_success(client):
-    """Тест 5: успешная аутентификация"""
+    # Отправляем форму с правильным логином и паролем
     response = client.post('/login/', data={
         'username': 'user',
         'password': 'qwerty',
         'remember': False
-    }, follow_redirects=True)
+    }, follow_redirects=True)  # follow_redirects - после входа перенаправляет на главную
     
     assert response.status_code == 200
-    # Проверяем, что есть сообщение об успехе или пользователь авторизован
+    # Должно появиться приветствие или имя пользователя
     assert ('Добро пожаловать' in response.text or 
             'user' in response.text or
             'Вы вошли' in response.text)
 
+# ТЕСТ 6: ошибка при неверном пароле
 def test_login_failure_wrong_password(client):
-    """Тест 6: неверный пароль"""
+    # Отправляем форму с правильным логином, но неверным паролем
     response = client.post('/login/', data={
         'username': 'user',
         'password': 'wrongpassword',
@@ -92,11 +94,13 @@ def test_login_failure_wrong_password(client):
     }, follow_redirects=True)
     
     assert response.status_code == 200
+    # Должно появиться сообщение об ошибке
     assert ('Неверное имя пользователя или пароль' in response.text or 
             'ошибка' in response.text.lower())
 
+# ТЕСТ 7: ошибка при неверном логине
 def test_login_failure_wrong_username(client):
-    """Тест 7: неверный логин"""
+    # Отправляем форму с неверным логином
     response = client.post('/login/', data={
         'username': 'wronguser',
         'password': 'qwerty',
@@ -104,179 +108,159 @@ def test_login_failure_wrong_username(client):
     }, follow_redirects=True)
     
     assert response.status_code == 200
+    # Должно появиться сообщение об ошибке
     assert ('Неверное имя пользователя или пароль' in response.text or 
             'ошибка' in response.text.lower())
 
+# ТЕСТ 8: выход из системы
 def test_logout(client):
-    """Тест 8: выход из системы"""
     # Сначала входим
     client.post('/login/', data={'username': 'user', 'password': 'qwerty'})
     # Затем выходим
     response = client.get('/logout/', follow_redirects=True)
     
     assert response.status_code == 200
+    # Должно появиться сообщение о выходе
     assert ('Вы вышли из системы' in response.text or 
             'выйти' in response.text.lower())
 
-# ============================================
-# ТЕСТЫ СЕКРЕТНОЙ СТРАНИЦЫ
-# ============================================
-
+# ТЕСТ 9: авторизованный пользователь видит секретную страницу
 def test_secret_page_accessible_for_authenticated(auth_client):
-    """Тест 9: авторизованный пользователь имеет доступ к секретной странице"""
+    # auth_client - уже авторизованный клиент
     response = auth_client.get('/secret/')
     assert response.status_code == 200
-    # Проверяем наличие контента секретной страницы
+    # На странице должен быть текст "Секретная" или "Доступ разрешен"
     assert ('СЕКРЕТНАЯ' in response.text.upper() or 
             'Доступ разрешен' in response.text or
             'secret' in response.text.lower())
 
+# ТЕСТ 10: неавторизованный пользователь не видит секретную страницу
 def test_secret_page_redirects_for_anonymous(client):
-    """Тест 10: неавторизованный пользователь перенаправляется на страницу входа"""
+    # Пытаемся зайти на секретную страницу без авторизации
     response = client.get('/secret/', follow_redirects=True)
     assert response.status_code == 200
-    # Должны быть на странице входа
+    # Должны быть перенаправлены на страницу входа
     assert ('Вход в систему' in response.text or 
             'Login' in response.text or
             'войдите' in response.text.lower())
 
+# ТЕСТ 11: после входа перенаправляет на запрошенную страницу
 def test_redirect_to_requested_page_after_login(client):
-    """Тест 11: после входа перенаправляет на запрошенную страницу"""
     # Сначала пробуем зайти на секретную страницу (без авторизации)
     response = client.get('/secret/')
-    # Проверяем, что нас перенаправили на страницу входа
-    assert response.status_code == 302  # Редирект
+    # Должен быть редирект (статус 302)
+    assert response.status_code == 302
     
-    # Получаем URL перенаправления
-    location = response.location
-    
-    # Теперь входим через страницу входа с next параметром
-    # Извлекаем next из location или используем прямой доступ
-    if 'next=' in location:
-        # Делаем POST на страницу входа с правильным next
-        response = client.post('/login/', data={
-            'username': 'user',
-            'password': 'qwerty',
-            'remember': False
-        }, follow_redirects=True)
-        
-        # После входа должны оказаться на главной (или на секретной, если есть next)
-        # Проверяем, что пользователь авторизован
-        assert response.status_code == 200
-        # Проверяем наличие признаков авторизации
-        assert ('user' in response.text or 
-                'Добро пожаловать' in response.text)
-
-# ============================================
-# ТЕСТЫ "ЗАПОМНИТЬ МЕНЯ"
-# ============================================
-
-def test_remember_me_sets_cookie(client):
-    """Тест 12: чекбокс 'Запомнить меня' устанавливает cookie"""
+    # Входим через страницу входа
     response = client.post('/login/', data={
         'username': 'user',
         'password': 'qwerty',
-        'remember': True
+        'remember': False
+    }, follow_redirects=True)
+    
+    # Проверяем что авторизация прошла успешно
+    assert response.status_code == 200
+    assert ('user' in response.text or 
+            'Добро пожаловать' in response.text)
+
+# ТЕСТ 12: чекбокс "Запомнить меня" устанавливает cookie
+def test_remember_me_sets_cookie(client):
+    # Входим с отмеченным чекбоксом "Запомнить меня"
+    response = client.post('/login/', data={
+        'username': 'user',
+        'password': 'qwerty',
+        'remember': True  # remember=True означает что чекбокс отмечен
     })
     
-    # Flask-Login может использовать session cookie вместо remember_token
-    # Проверяем, что установлена какая-то cookie
+    # Проверяем что установлена какая-то cookie
     set_cookie = response.headers.get('Set-Cookie', '')
-    # Проверяем, что есть cookie (любая)
     assert set_cookie != ''
-    # Или проверяем, что в ответе есть session
+    # В cookie должна быть session или remember_token
     assert 'session' in set_cookie or 'remember' in set_cookie.lower()
 
+# ТЕСТ 13: без чекбокса поведение стандартное
 def test_remember_me_not_set_without_checkbox(client):
-    """Тест 13: без чекбокса поведение стандартное"""
+    # Входим без чекбокса
     response = client.post('/login/', data={
         'username': 'user',
         'password': 'qwerty',
         'remember': False
     })
     
-    # Просто проверяем, что вход прошел успешно
+    # Просто проверяем что вход прошел (редирект или успех)
     assert response.status_code == 302 or response.status_code == 200
 
-# ============================================
-# ТЕСТЫ НАВБАРА
-# ============================================
-
+# ТЕСТ 14: для авторизованных показывается ссылка на секретную страницу
 def test_navbar_shows_secret_link_for_authenticated(auth_client):
-    """Тест 14: для авторизованных показывается ссылка на секретную страницу"""
     response = auth_client.get('/')
-    # Проверяем наличие ссылки на секретную страницу
+    # В меню должна быть ссылка на секретную страницу
     assert ('secret' in response.text.lower() or 
             'Секретная' in response.text or
             '🔒' in response.text)
 
+# ТЕСТ 15: для неавторизованных скрыта ссылка на секретную страницу
 def test_navbar_hides_secret_link_for_anonymous(client):
-    """Тест 15: для неавторизованных скрыта ссылка на секретную страницу"""
     response = client.get('/')
-    # Проверяем, что нет ссылки на секретную страницу
-    # Но при этом есть ссылка на вход
+    # Ссылки на секретную страницу НЕТ
     assert ('Секретная страница' not in response.text and 
             'secret' not in response.text.lower()) or \
            ('Войти' in response.text)
 
+# ТЕСТ 16: для авторизованных показывается имя пользователя
 def test_navbar_shows_username_for_authenticated(auth_client):
-    """Тест 16: для авторизованных показывается имя пользователя"""
     response = auth_client.get('/')
-    # Проверяем, что имя пользователя отображается
+    # В меню должно быть написано "user"
     assert 'user' in response.text
 
-# ============================================
-# ДОПОЛНИТЕЛЬНЫЕ ТЕСТЫ
-# ============================================
-
+# ТЕСТ 17: на главной странице есть ссылки на все разделы
 def test_index_page_has_links(client):
-    """Тест 17: на главной странице есть ссылки на все разделы"""
     response = client.get('/')
+    # Должна быть ссылка на счетчик
     assert 'Счетчик посещений' in response.text or 'counter' in response.text.lower()
+    # Должна быть ссылка на вход
     assert 'Войти' in response.text or 'login' in response.text.lower()
 
+# ТЕСТ 18: при успешном входе показывается flash-сообщение
 def test_flash_messages_on_login_success(client):
-    """Тест 18: flash-сообщение при успешном входе"""
     response = client.post('/login/', data={
         'username': 'user',
         'password': 'qwerty'
     }, follow_redirects=True)
     
-    # Проверяем наличие любого alert сообщения
+    # Должно быть всплывающее сообщение (alert)
     assert ('alert-success' in response.text or 
             'alert' in response.text)
 
+# ТЕСТ 19: при ошибке входа показывается flash-сообщение об ошибке
 def test_flash_messages_on_login_failure(client):
-    """Тест 19: flash-сообщение при неудачном входе"""
     response = client.post('/login/', data={
         'username': 'user',
         'password': 'wrong'
     }, follow_redirects=True)
     
-    # Проверяем наличие сообщения об ошибке
+    # Должно быть красное сообщение об ошибке
     assert ('alert-danger' in response.text or 
             'danger' in response.text or
             'ошибк' in response.text.lower())
 
-# ============================================
-# ДОПОЛНИТЕЛЬНЫЕ ТЕСТЫ ДЛЯ ПОКРЫТИЯ
-# ============================================
-
+# ТЕСТ 20: авторизованный пользователь на странице входа перенаправляется
 def test_authenticated_user_redirected_from_login(auth_client):
-    """Тест 20: авторизованный пользователь на странице входа перенаправляется"""
+    # auth_client уже авторизован, пытается зайти на /login/
     response = auth_client.get('/login/', follow_redirects=True)
     assert response.status_code == 200
-    # Должен быть на главной
+    # Должен быть перенаправлен на главную страницу
     assert 'Лабораторная работа №3' in response.text
 
+# ТЕСТ 21: счетчик работает через session
 def test_counter_works_in_session(client):
-    """Тест 21: счетчик работает через session"""
-    # Очищаем сессию
+    # Очищаем сессию перед тестом
     with client.session_transaction() as sess:
         sess.clear()
     
+    # Первое посещение - счетчик 1
     response1 = client.get('/counter/')
     assert '1' in response1.text
     
+    # Второе посещение - счетчик 2
     response2 = client.get('/counter/')
     assert '2' in response2.text
