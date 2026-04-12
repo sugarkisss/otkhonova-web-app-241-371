@@ -10,19 +10,19 @@
   </head>
   <body class="d-flex flex-column h-100">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container">
-              <a class="navbar-brand" href="{{ url_for('index') }}">Лабораторная работа №3</a>
+              <a class="navbar-brand text-muted" href="{{ url_for('index') }}">Лабораторная работа №3</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('index') }}">Главная</a>
+                    <a class="nav-link text-muted" href="{{ url_for('index') }}">Главная</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('counter') }}">Счетчик посещений</a>
+                    <a class="nav-link text-muted" href="{{ url_for('counter') }}">Счетчик посещений</a>
                   </li>
                   
                   {% if current_user.is_authenticated %}
@@ -38,7 +38,7 @@
                   {% else %}
                     <!-- Ссылки для неавторизованных пользователей -->
                     <li class="nav-item">
-                      <a class="nav-link btn btn-outline-primary text-white" href="{{ url_for('login') }}">
+                      <a class="nav-link btn btn-outline-primary text-muted" href="{{ url_for('login') }}">
                         <i class="bi bi-box-arrow-in-right"></i> Войти
                       </a>
                     </li>
@@ -67,9 +67,9 @@
         </div>
     </main>
 
-    <footer class="footer mt-auto py-3 bg-dark text-white border-top">
+    <footer class="footer mt-auto py-3 bg-light border-top">
         <div class="container text-center">
-            <span>Выполнила: Отхонова Амуланга Александровна, группа 241-371</span>
+            <span class="text-muted">Выполнила: Отхонова Амуланга Александровна, группа 241-371</span>
         </div>
     </footer>
 

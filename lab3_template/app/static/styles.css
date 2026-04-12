@@ -1,50 +1,57 @@
 /* Основные стили */
 body {
     font-size: 1rem;
-    background-color: #f8f9fa;
 }
 
 /* Карточки */
 .card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .card-header {
-    border-radius: 10px 10px 0 0 !important;
+    font-weight: bold;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+/* Таблицы */
+.table-responsive {
+    max-height: 500px;
+    overflow: auto;
+}
+
+/* Код */
+code {
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #d63384;
+}
+
+/* Бейджи */
+.badge {
+    margin: 3px;
+}
+
+/* Подвал */
+footer {
+    margin-top: auto;
+}
+
+/* Навигация */
+.navbar-brand {
+    font-weight: bold;
 }
 
 /* Кнопки */
 .btn {
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Навигация */
-.navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.nav-link {
-    transition: all 0.3s ease;
-    margin: 0 5px;
-}
-
-.nav-link:hover {
-    transform: translateY(-2px);
+    border-radius: 6px;
 }
 
 /* Flash сообщения */
 .alert {
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 /* Счетчик */
@@ -54,24 +61,11 @@ body {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Подвал */
-footer {
-    margin-top: auto;
-}
-
 /* Формы */
 .form-control, .input-group-text {
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .form-control:focus {
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
-
-/* Код */
-code {
-    background-color: #e9ecef;
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: #d63384;
 }

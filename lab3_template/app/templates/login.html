@@ -3,11 +3,11 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-        <div class="card shadow-lg mt-5">
+        <div class="card">
             <div class="card-header bg-primary text-white text-center">
-                <h3 class="mb-0">
+                <h4 class="mb-0">
                     <i class="bi bi-box-arrow-in-right"></i> Вход в систему
-                </h3>
+                </h4>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('login') }}">
@@ -34,11 +34,11 @@
                         <label class="form-check-label" for="remember">
                             <i class="bi bi-bookmark-check"></i> Запомнить меня
                         </label>
-                        <small class="text-muted d-block">(сессия сохранится после закрытия браузера)</small>
+                        <div class="form-text text-muted small">(сессия сохранится после закрытия браузера)</div>
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="btn btn-primary">
                             <i class="bi bi-unlock"></i> Войти
                         </button>
                     </div>
@@ -46,7 +46,7 @@
                 
                 <hr class="my-4">
                 
-                <div class="alert alert-info text-center small">
+                <div class="alert alert-info text-center small mb-0">
                     <strong><i class="bi bi-info-circle"></i> Тестовые данные:</strong><br>
                     Логин: <code>user</code><br>
                     Пароль: <code>qwerty</code>

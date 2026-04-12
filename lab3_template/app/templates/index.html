@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="text-center my-5">
-            <h1 class="display-4">Лабораторная работа №3</h1>
-            <p class="lead">Аутентификация пользователей и счетчик посещений</p>
-            <hr class="my-4">
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="my-5 text-center">Лабораторная работа №3</h1>
+        
+        <div class="alert alert-info text-center">
+            <h4 class="mb-0">Аутентификация пользователей и счетчик посещений</h4>
         </div>
         
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="bi bi-graph-up"></i> Счетчик посещений</h4>
+                        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Счетчик посещений</h5>
                     </div>
                     <div class="card-body">
                         <p>Страница счетчика использует глобальный объект <code>session</code> Flask.</p>
                         <p>Каждый раз при посещении страницы счетчик увеличивается.</p>
                         <p>Значение сохраняется отдельно для каждого пользователя (браузера).</p>
-                        <a href="{{ url_for('counter') }}" class="btn btn-primary">Перейти к счетчику →</a>
+                        <a href="{{ url_for('counter') }}" class="btn btn-primary mt-2">Перейти к счетчику →</a>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header bg-success text-white">
-                        <h4 class="mb-0"><i class="bi bi-shield-lock"></i> Аутентификация</h4>
+                        <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Аутентификация</h5>
                     </div>
                     <div class="card-body">
                         {% if current_user.is_authenticated %}
@@ -56,14 +56,26 @@
                 <h5 class="mb-0">Функционал приложения</h5>
             </div>
             <div class="card-body">
-                <ul>
-                    <li>✅ <strong>Счетчик посещений</strong> - использует session для хранения количества визитов</li>
-                    <li>✅ <strong>Аутентификация</strong> - вход/выход с использованием Flask-Login</li>
-                    <li>✅ <strong>"Запомнить меня"</strong> - remember_token для сохранения сессии</li>
-                    <li>✅ <strong>Секретная страница</strong> - доступ только для авторизованных</li>
-                    <li>✅ <strong>Перенаправление</strong> - после входа возвращает на запрошенную страницу</li>
-                    <li>✅ <strong>Flash-сообщения</strong> - уведомления о действиях</li>
-                </ul>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">✓ Реализовано:</h6>
+                        <ul>
+                            <li>Счетчик посещений (session)</li>
+                            <li>Аутентификация (Flask-Login)</li>
+                            <li>"Запомнить меня" (remember_token)</li>
+                            <li>Секретная страница (login_required)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">✓ Особенности:</h6>
+                        <ul>
+                            <li>Перенаправление после входа</li>
+                            <li>Flash-сообщения</li>
+                            <li>Адаптивное меню</li>
+                            <li>Bootstrap 5 оформление</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
