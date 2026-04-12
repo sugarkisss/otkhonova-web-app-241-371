@@ -1,0 +1,58 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg mt-5">
+            <div class="card-header bg-primary text-white text-center">
+                <h3 class="mb-0">
+                    <i class="bi bi-box-arrow-in-right"></i> Вход в систему
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Логин:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Введите логин" required autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Введите пароль" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">
+                            <i class="bi bi-bookmark-check"></i> Запомнить меня
+                        </label>
+                        <small class="text-muted d-block">(сессия сохранится после закрытия браузера)</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-unlock"></i> Войти
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="alert alert-info text-center small">
+                    <strong><i class="bi bi-info-circle"></i> Тестовые данные:</strong><br>
+                    Логин: <code>user</code><br>
+                    Пароль: <code>qwerty</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

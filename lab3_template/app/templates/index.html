@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center my-5">
+            <h1 class="display-4">Лабораторная работа №3</h1>
+            <p class="lead">Аутентификация пользователей и счетчик посещений</p>
+            <hr class="my-4">
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-graph-up"></i> Счетчик посещений</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Страница счетчика использует глобальный объект <code>session</code> Flask.</p>
+                        <p>Каждый раз при посещении страницы счетчик увеличивается.</p>
+                        <p>Значение сохраняется отдельно для каждого пользователя (браузера).</p>
+                        <a href="{{ url_for('counter') }}" class="btn btn-primary">Перейти к счетчику →</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="bi bi-shield-lock"></i> Аутентификация</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if current_user.is_authenticated %}
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Вы вошли как <strong>{{ current_user.username }}</strong>
+                            </div>
+                            <p>У вас есть доступ к <a href="{{ url_for('secret') }}">секретной странице</a>.</p>
+                            <a href="{{ url_for('logout') }}" class="btn btn-danger">Выйти</a>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle-fill"></i>
+                                Вы не авторизованы.
+                            </div>
+                            <p>Для доступа к секретной странице войдите в систему.</p>
+                            <p><strong>Тестовые данные:</strong> логин: <code>user</code>, пароль: <code>qwerty</code></p>
+                            <a href="{{ url_for('login') }}" class="btn btn-success">Войти</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Функционал приложения</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>✅ <strong>Счетчик посещений</strong> - использует session для хранения количества визитов</li>
+                    <li>✅ <strong>Аутентификация</strong> - вход/выход с использованием Flask-Login</li>
+                    <li>✅ <strong>"Запомнить меня"</strong> - remember_token для сохранения сессии</li>
+                    <li>✅ <strong>Секретная страница</strong> - доступ только для авторизованных</li>
+                    <li>✅ <strong>Перенаправление</strong> - после входа возвращает на запрошенную страницу</li>
+                    <li>✅ <strong>Flash-сообщения</strong> - уведомления о действиях</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
