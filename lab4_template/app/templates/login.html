@@ -1,0 +1,51 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card">
+      <div class="card-header bg-primary text-white text-center">
+        <h4 class="mb-0">
+          <i class="bi bi-box-arrow-in-right"></i> Вход в систему
+        </h4>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="mb-3">
+            <label for="username" class="form-label">Логин:</label>
+            <input type="text" class="form-control" id="username" name="username" 
+                   placeholder="Введите логин" required autofocus>
+          </div>
+          
+          <div class="mb-3">
+            <label for="password" class="form-label">Пароль:</label>
+            <input type="password" class="form-control" id="password" name="password" 
+                   placeholder="Введите пароль" required>
+          </div>
+          
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+            <label class="form-check-label" for="remember">
+              <i class="bi bi-bookmark-check"></i> Запомнить меня
+            </label>
+          </div>
+          
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-unlock"></i> Войти
+            </button>
+          </div>
+        </form>
+        
+        <hr class="my-4">
+        
+        <div class="alert alert-info text-center small mb-0">
+          <strong><i class="bi bi-info-circle"></i> Тестовые данные:</strong><br>
+          Логин: <code>admin</code>, пароль: <code>Admin123!</code><br>
+          Логин: <code>user1</code>, пароль: <code>User123!</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+body {
+    font-size: 1rem;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 8px;
+}
+
+.card-header {
+    font-weight: bold;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.table-responsive {
+    max-height: 600px;
+    overflow: auto;
+}
+
+code {
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #d63384;
+}
+
+footer {
+    margin-top: auto;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.btn {
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.form-control, .form-select, .input-group-text {
+    border-radius: 6px;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Стили для валидации */
+.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+}
+
+table th {
+    background-color: #f8f9fa;
+}
