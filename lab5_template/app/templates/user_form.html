@@ -1,0 +1,85 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card">
+      <div class="card-header bg-primary text-white text-center">
+        <h4 class="mb-0">
+          <i class="bi bi-person-{{ 'gear' if is_edit else 'plus' }}"></i>
+          {{ 'Редактирование пользователя' if is_edit else 'Создание пользователя' }}
+        </h4>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          {% if not is_edit %}
+            <!-- Поле для логина (только при создании) -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Логин *</label>
+              <input type="text" class="form-control" id="username" name="username" 
+                     value="{{ user_data.get('username', '') }}" required>
+              <div class="form-text">Только латинские буквы и цифры, не менее 5 символов</div>
+            </div>
+            
+            <!-- Поле для пароля (только при создании) -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Пароль *</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+              <div class="form-text">
+                Не менее 8 символов, заглавные и строчные буквы, цифры, без пробелов
+              </div>
+            </div>
+          {% endif %}
+          
+          <!-- Фамилия -->
+          <div class="mb-3">
+            <label for="last_name" class="form-label">Фамилия</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" 
+                   value="{{ user_data.get('last_name', '') }}">
+          </div>
+          
+          <!-- Имя (обязательное) -->
+          <div class="mb-3">
+            <label for="first_name" class="form-label">Имя *</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" 
+                   value="{{ user_data.get('first_name', '') }}" required>
+          </div>
+          
+          <!-- Отчество -->
+          <div class="mb-3">
+            <label for="patronymic" class="form-label">Отчество</label>
+            <input type="text" class="form-control" id="patronymic" name="patronymic" 
+                   value="{{ user_data.get('patronymic', '') }}">
+          </div>
+          
+          <!-- Выбор роли (только для администратора при редактировании) -->
+          <div class="mb-3">
+            <label for="role_id" class="form-label">Роль</label>
+            <select class="form-select" id="role_id" name="role_id" 
+                    {% if is_edit and not is_admin %}disabled{% endif %}>
+              <option value="">-- Без роли --</option>
+              {% for role in roles %}
+                <option value="{{ role.id }}" {% if user_data.get('role_id')|string == role.id|string %}selected{% endif %}>
+                  {{ role.name }} - {{ role.description }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if is_edit and not is_admin %}
+              <div class="form-text text-muted">Только администратор может изменять роль</div>
+            {% endif %}
+          </div>
+          
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save"></i> Сохранить
+            </button>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Отмена
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
